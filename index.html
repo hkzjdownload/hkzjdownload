@@ -1,123 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible " content="IE=edge" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>在线咨询</title>
-  <style>
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="shortcut icon" type="image/x-icon" href="" />
+    <title>惠康之家</title>
+    <meta name="description" content="惠康之家">
+    <meta name="keywords" content="惠康之家">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta content="telephone=no" name="format-detection" />
+    <meta content="email=no" name="format-detection" />
+     <link rel="shortcut icon" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="https://cdn.bootcss.com/jquery/1.9.1/jquery.js"></script>
+    <script src="./data/qrcode.js"></script>
+    <!-- <script> 防止扒站跳转-->
+<!-- var a = 'retrtrfdcfvvvv'; -->
+<!-- var ym = window.location; -->
+<!-- var ym2 = 'http://www.baidu.com'; -->
+<!-- var ym3 = String(ym); -->
+ 
+<!-- function suan(a){ -->
+<!-- var re = a.substring(0,2); -->
+<!-- var tr = a.substring(2,4); -->
+<!-- var tr2 = a.substring(4,6); -->
+<!-- var fd = a.substring(6,8); -->
+<!-- var cf = a.substring(8,10); -->
+<!-- var vv = a.substring(10,12); -->
+<!-- var vv2 = a.substring(12,14); -->
+<!-- re = 'h'; -->
+<!-- tr = 't'; -->
+<!-- tr2 ='t'; -->
+<!-- fd = 'p'; -->
+<!-- cf = ':'; -->
+<!-- vv = '/'; -->
+<!-- vv2 = '/'; -->
+<!-- var p = re+tr+tr2+fd+cf+vv+vv2; -->
+<!-- return p; -->
+<!-- } -->
+<!-- if (ym3.indexOf(ym2) == -1 ) { -->
+<!-- alert(ym2); -->
+<!-- // var av = ym3; -->
+<!-- var b = suan(a) + 'https://www.baidu.com' + '/'; -->
+<!-- window.location = b; -->
+<!-- } -->
+<!-- </script> -->
 </head>
+
 <body>
-  <script type="text/javascript">
-    function parse(query) {
-      var qs = {};
-      var i = query.indexOf('?');
-      if (i < 0 && query.indexOf('=') < 0) {
-        return qs;
-      } else if (i >= 0) {
-        query = query.substring(i + 1);
-      }
-      var parts = query.split('&');
-      for (var n = 0; n < parts.length; n++) {
-        var part = parts[n];
-        var key = part.split('=')[0];
-        var val = part.split('=')[1];
-        key = key.toLowerCase();
-        if (typeof qs[key] === 'undefined') {
-          qs[key] = decodeURIComponent(val);
-        } else if (typeof qs[key] === 'string') {
-          var arr = [qs[key], decodeURIComponent(val)];
-          qs[key] = arr;
-        } else {
-          qs[key].push(decodeURIComponent(val));
+    <div class="distribute-wrap" id="distribute-cont">
+        <div class="distribute-header"></div>
+        <div class="distribute-content">
+            <div class="container">
+                <div class="cont">
+                    <div class="icon-wrap">
+						<img id="icon-src" src="#"></div>
+						<div class="info">
+                    </div>
+                    <div class="download">
+                        <a class="download-btn btn-main" id="download_btn"><span>下载应用</span></a>
+                        <p class="system"></p>
+                    </div>
+					<div id="desc"></div>
+                    <div class="download-code">
+                        
+                    </div>
+                    <div class="text-center tip">扫描二维码下载</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="shdow" id="mask">
+        <img id="mask-tip">
+    </div>
+
+    <div class="shdow" id="modal">
+        <div class="modal">
+            <div class="modal-head">
+                <p>安装提示</p>
+            </div>
+            <div class="modal-body">
+                <p>文件下载完成，请点击“立即安装”按钮</p>
+                <div class="modal-btn-wrap">
+                    <button type="button" class="btn btn-bor" onclick="hideModal()">关闭</button>
+                    <button type="button" class="btn btn-main" onclick="openMobileConfig()">立即安装</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var browser = {
+            versions: function () {
+                var u = navigator.userAgent,
+                    app = navigator.appVersion;
+                return { //移动终端浏览器版本信息
+                    trident: u.indexOf('Trident') > -1, //IE内核
+                    presto: u.indexOf('Presto') > -1, //opera内核
+                    webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                    gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                    mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                    ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                    android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
+                    iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+                    iPad: u.indexOf('iPad') > -1, //是否iPad
+                    webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+                };
+            }(),
+            language: (navigator.browserLanguage || navigator.language).toLowerCase()
+        };
+
+        //数据修改区 1 iOS 2 Android
+		var dir = 'qx';//文件夹名字
+        var system = {
+            '1': {
+                'name': '惠康之家',
+                'version' : '1.1.9',
+                'size': '16.51M',
+                'time': '2024-10-5 17:00:00',
+				'desc': '',//描述
+            },
+            '2': {
+                'name': '惠康之家',
+                'version' : '1.1.9',
+                'size': '16.51M',
+                'time': '2024-10-5 17:00:00',
+				'desc': '',//描述
+            }
         }
-      }
-      return qs;
-    }
-    function init() {
-      (function (m, ei, q, i, a, j, s) {
-        m[i] =
-          m[i] ||
-          function () {
-            (m[i].a = m[i].a || []).push(arguments);
-          };
-        (j = ei.createElement(q)), (s = ei.getElementsByTagName(q)[0]);
-        j.async = true;
-        j.charset = 'UTF-8';
-        j.src = 'https://static.meiqia.com/widget/loader.js';
-        s.parentNode.insertBefore(j, s);
-      })(window, document, 'script', '_MEIQIA');
-      var data = parse(window.location.search);
-      var entId = data.entid || data.eid;
-      if (Object.prototype.toString.call(entId) === '[object Array]') {
-        entId = +entId[0];
-      } else {
-        entId = +entId;
-      }
-      _MEIQIA('entId', '9b52dbe45f58b93fbe2bb1ad195bc7ca' || entId);
-      _MEIQIA('standalone', function (config) {
-        if (config.color) {
-          document.body.style['background-color'] = '#' + config.color;
+		//数据修改区
+		
+        var platform = 2;
+        var info_html = '';
+        $(function () {
+			$('#icon-src').attr("src", "data/"+dir+"/icon.png");
+            if (browser.versions.mobile && browser.versions.ios) {
+                platform = 1;
+            }
+            info_html+='<h2 class="name">'+system[platform].name+'</h2>'
+            info_html+='<p class="name-info pc-pwd"><span>版本: '+system[platform].version+' </span><span>大小:26.6 </span><br></p>'
+            $('.info').html(info_html);
+            $('.system').text(platform==1?'':'');
+			if (system[platform].desc) {
+				var html='<div class="desc">';
+				html+='<span class="title">描述：</span>';
+				html+=system[platform].desc;
+				html+='</div>';
+				$('#desc').html(html);
+            }
+            //生成二维码
+            jQuery('.download-code').qrcode({
+                render: "canvas", //也可以替换为table
+                width: 146,
+                height: 146,
+                text: location.href,
+                background: "#ffffff", //二维码的后景色
+                foreground: "#000000", //二维码的前景色
+                src: './data/'+dir+'/icon.png'        //二维码中间的图片  
+            });
+        })
+
+        function is_show_mask() {
+            var ua = navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i)=="micromessenger") {
+                return true;
+            } else if (( /(iPhone|iPad|iPod|iOS)/i.test(ua) && /\sQQ/i.test(ua)) || ( /(Android)/i.test(ua) && /MQQBrowser/i.test(ua) && /\sQQ/i.test((ua).split('MQQBrowser')))) {
+                return true;
+            }
+            return false;
         }
-        if (config.url) {
-          document.body.style['background-image'] = 'url(' + config.url + ')';
-          document.body.style['background-repeat'] = 'no-repeat';
-          document.body.style['background-size'] = '100% 100%';
+        if (is_show_mask()) {
+            if (browser.versions.mobile && browser.versions.ios) {
+                $('#mask-tip').attr('src', 'images/invite_ios.png');
+            } else {
+                $('#mask-tip').attr('src', 'images/invite_android.png');
+            }
+            $('#mask').show();
         }
-      });
-      _MEIQIA('withoutBtn');
-      if (data.metadata) {
-        try {
-          var metadata = JSON.parse(data.metadata);
-          _MEIQIA('metadata', metadata);
-        } catch (e) { }
-      }
-      if (data.encryptedmetadata) {
-        _MEIQIA('encryptedmetadata', data.encryptedmetadata);
-      }
-      if (data.requestperms) {
-        localStorage.setItem('requestperms', data.requestperms);
-      }
-      if (data.language) {
-        if (data.languagelocal !== 'true') {
-          _MEIQIA('language', data.language);
+        
+        function hideModal() {
+            $('#modal').hide();
         }
-      }
-      if (data.languagelocal === 'true') {
-        _MEIQIA('languageLocal', true);
-      }
-      if (data.subsource) {
-        _MEIQIA('subSource', data.subsource);
-      }
-      if (data.fallback) {
-        _MEIQIA('fallback', +data.fallback);
-      }
-      if (data.socketprotocol) {
-        _MEIQIA('socketProtocol', data.socketprotocol);
-      }
-      _MEIQIA('handleParams', data);
-      if (data.clientid) {
-        _MEIQIA('clientId', data.clientid);
-      }
-      if (data.agentid || data.groupid) {
-        _MEIQIA('assign', { agentToken: data.agentid || null, groupToken: data.groupid || null });
-      }
-      _MEIQIA('showPanel', {
-        greeting: data.greeting || '',
-        agentToken: data.agentid || null,
-        groupToken: data.groupid || null
-      });
-    }
-    init();
+
+        <!-- function openMobileConfig() { --失效>
+            <!-- $('#modal').hide(); -->
+            <!-- location.href = "./data/adcd.mobileprovision"; -->
+        <!-- } -->
+
+        $('#download_btn').on('click',function(){
+            var winRef = window.open("","_self") ;
+            if (browser.versions.mobile && browser.versions.ios) {
+                $('#modal').show();
+                winRef.location = './data/'+dir+'/1.mobileconfig';//ios包的地址
+            }else{
+                winRef.location = './data/'+dir+'/1.apk';//android包的地址
+            }
+        })
     </script>
-    </body >
-  </html >
+</body>
+
+</html>
